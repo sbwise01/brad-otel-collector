@@ -1,0 +1,28 @@
+---
+receivers:
+  awss3:
+    bucket_name: testbucket
+    bucket_region: us-east-1
+    bucket_io_timeout: 2m
+    bucket_endpoint: localhost:9000
+    checkpoint_key: awss3receiver_checkpoint.txt
+    gzip_compression: true
+    collection_interval: 15s
+    scan_offset: 60m
+    processing_delay: 10s
+    filter_stale_data_points: false
+    log_level: DEBUG
+    extra_labels:
+      environ: citest:all
+
+exporters:
+  file:
+    path: /srv/awss3receiver/data/exported/otel-exported-metrics.json
+
+service:
+  pipelines:
+    metrics/k8s-host:
+      receivers:
+      - awss3
+      exporters:
+      - file
